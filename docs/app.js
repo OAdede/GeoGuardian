@@ -10,16 +10,11 @@ const map = L.map('map', {
 });
 
 // 🌍 Açık renkli klasik harita
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains: 'abcd',
-  maxZoom: 19
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  noWrap: false,
+  continuousWorld: true,
+  attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>'
 }).addTo(map);
-
-
-
-
-
 
 function fixMapSize() {
   map.invalidateSize(true);
