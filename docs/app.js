@@ -10,11 +10,15 @@ const map = L.map('map', {
 });
 
 // 🌍 Açık renkli klasik harita
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  noWrap: false,
-  continuousWorld: true,
-  attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>'
+L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+  minZoom: 0,
+  maxZoom: 20,
+  attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
 }).addTo(map);
+
+
+
+
 
 function fixMapSize() {
   map.invalidateSize(true);
