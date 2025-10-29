@@ -52,7 +52,7 @@ const clearMarkers = () => {
 
 async function fetchQuakes() {
   const res = await fetch(
-    `http://127.0.0.1:8000/earthquakes?window=${state.window}&minmag=${state.minmag}`
+    `https://geoguardian-backend.onrender.com/earthquakes?window=${state.window}&minmag=${state.minmag}`
   );
   quakes = await res.json();
 }
