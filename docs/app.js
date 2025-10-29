@@ -1,3 +1,5 @@
+const API_URL = "https://geoguardian-backend.onrender.com";
+
 // ========== 2D MAP ========== 
 const map = L.map('map', {
   center: [39, 35],
@@ -52,7 +54,11 @@ const clearMarkers = () => {
 
 async function fetchQuakes() {
   const res = await fetch(
-    `https://geoguardian-backend.onrender.com/earthquakes?window=${state.window}&minmag=${state.minmag}`
+    `${API_URL}/earthquakes?window=${state.window}&minmag=${state.minmag}`,
+    {
+      method: "GET",
+      cache: "no-cache"
+    }
   );
   quakes = await res.json();
 }
@@ -65,7 +71,7 @@ async function loadEarthquakes2D() {
   if (!quakes || quakes.length === 0) return;
 
   quakes
-    .filter(eq => eq.mag >= state.minmag) // ✅ Ön uçta kesin filtreleme
+    .filter(eq => eq.mag >= state.minmag)
     .forEach(eq => {
       const marker = L.circleMarker([eq.lat, eq.lon], {
         radius: Math.max(2, eq.mag * 2),
@@ -96,7 +102,7 @@ async function initGlobe(forceReload = false) {
     await fetchQuakes();
 
   const points = quakes
-    .filter(eq => eq.mag >= state.minmag) // ✅ Filtre 3D’de de tam uygulanır
+    .filter(eq => eq.mag >= state.minmag)
     .map(eq => ({
       lat: eq.lat,
       lng: eq.lon,
@@ -161,7 +167,7 @@ btn3d.onclick = async () => {
   document.getElementById('map').style.display = "none";
   globeEl.style.display = "block";
 
-  await initGlobe();
+  await initGlobe(true);
   fixGlobe();
 };
 
