@@ -1,6 +1,6 @@
 const API_URL = "https://geoguardian-backend.onrender.com";
 
-// ========== 2D MAP ========== 
+// ========== 2D MAP ==========
 const map = L.map('map', {
   center: [39, 35],
   zoom: 4,
@@ -9,24 +9,28 @@ const map = L.map('map', {
   worldCopyJump: true
 });
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+// 🚀 Daha hızlı harita servisi (Carto Dark)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
   noWrap: false,
-  continuousWorld: true
+  continuousWorld: true,
+  attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
 }).addTo(map);
 
 function fixMapSize() {
   map.invalidateSize(true);
 }
+
 function prepareMap() {
   fixMapSize();
-  setTimeout(fixMapSize, 200);
+  setTimeout(() => {
+    map.invalidateSize();
+    map.setView([39, 35], 4);
+  }, 500);
 }
-
 
 // ====== State ======
 let quakes = [];
 const state = { window: "day", minmag: 0, markers: [] };
-
 
 // ====== Elements ======
 const btn2d = document.getElementById('btn2d');
@@ -36,13 +40,13 @@ const refreshBtn = document.getElementById('refreshBtn');
 const windowSelect = document.getElementById('windowSelect');
 const magRange = document.getElementById('magRange');
 const magVal = document.getElementById('magVal');
+const loadingEl = document.getElementById('loading');
 
 magRange.oninput = () => {
   state.minmag = Number(magRange.value);
   magVal.textContent = state.minmag.toFixed(1);
 };
 windowSelect.onchange = () => state.window = windowSelect.value;
-
 
 // ====== Helpers ======
 const colorForMag = m => (m >= 5 ? 'red' : m >= 4 ? 'orange' : m >= 3 ? 'yellow' : 'lime');
@@ -53,22 +57,19 @@ const clearMarkers = () => {
 };
 
 async function fetchQuakes() {
-  const res = await fetch(
-    `${API_URL}/earthquakes?window=${state.window}&minmag=${state.minmag}`,
-    {
-      method: "GET",
-      cache: "no-cache"
-    }
-  );
+  const res = await fetch(`${API_URL}/earthquakes?window=${state.window}&minmag=${state.minmag}`);
   quakes = await res.json();
 }
 
-
 // ======= LOAD 2D =======
 async function loadEarthquakes2D() {
+  loadingEl.style.display = "flex"; // göster
   await fetchQuakes();
   clearMarkers();
-  if (!quakes || quakes.length === 0) return;
+  if (!quakes || quakes.length === 0) {
+    loadingEl.style.display = "none";
+    return;
+  }
 
   quakes
     .filter(eq => eq.mag >= state.minmag)
@@ -79,25 +80,19 @@ async function loadEarthquakes2D() {
         fillColor: colorForMag(eq.mag),
         fillOpacity: 0.55
       })
-        .bindPopup(
-          `<b>${eq.title}</b><br>` +
-          `Büyüklük: ${eq.mag} Mw<br>` +
-          `Derinlik: ${eq.depth} km`
-        )
-        .addTo(map);
-
+      .bindPopup(`<b>${eq.title}</b><br>Büyüklük: ${eq.mag} Mw<br>Derinlik: ${eq.depth} km`)
+      .addTo(map);
       state.markers.push(marker);
     });
 
-  fixMapSize();
+  loadingEl.style.display = "none"; // gizle
+  prepareMap();
 }
 
-
-// ========== 3D GLOBE ========== 
+// ========== 3D GLOBE ==========
 let world;
 
 async function initGlobe(forceReload = false) {
-
   if (!quakes.length || forceReload)
     await fetchQuakes();
 
@@ -111,7 +106,6 @@ async function initGlobe(forceReload = false) {
 
   if (!world || forceReload) {
     globeEl.innerHTML = "";
-
     world = Globe()(globeEl)
       .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
@@ -126,7 +120,7 @@ async function initGlobe(forceReload = false) {
     const controls = world.controls();
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.6;
-    controls.minDistance = 115;
+    controls.minDistance = window.innerWidth < 768 ? 180 : 115;
     controls.maxDistance = 500;
   }
 
@@ -134,8 +128,6 @@ async function initGlobe(forceReload = false) {
   fixGlobe();
 }
 
-
-// ========= Globe Size Fix =========
 function fixGlobe() {
   if (!world) return;
   requestAnimationFrame(() => {
@@ -148,26 +140,21 @@ function fixGlobe() {
   });
 }
 
-
-// ========= UI ACTIONS =========
+// ========= UI =========
 btn2d.onclick = () => {
   btn2d.classList.add('active');
   btn3d.classList.remove('active');
-
   globeEl.style.display = "none";
   document.getElementById('map').style.display = "block";
-
   prepareMap();
 };
 
 btn3d.onclick = async () => {
   btn3d.classList.add('active');
   btn2d.classList.remove('active');
-
   document.getElementById('map').style.display = "none";
   globeEl.style.display = "block";
-
-  await initGlobe(true);
+  await initGlobe();
   fixGlobe();
 };
 
@@ -176,10 +163,8 @@ refreshBtn.onclick = async () => {
     await initGlobe(true);
   } else {
     await loadEarthquakes2D();
-    prepareMap();
   }
 };
-
 
 // ========= Responsive =========
 window.addEventListener('resize', () => {
@@ -187,5 +172,4 @@ window.addEventListener('resize', () => {
   fixMapSize();
 });
 
-// ✅ İlk açılışta deprem verilerini getir ve göster
 loadEarthquakes2D();

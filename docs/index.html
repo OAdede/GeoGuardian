@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GeoGuardian 🌍</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
@@ -9,6 +10,12 @@
 <body>
 
   <h2>🌍 GeoGuardian - Canlı Afet Takip Sistemi</h2>
+
+  <!-- Loading Spinner -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Veriler yükleniyor...</p>
+  </div>
 
   <div id="viewToggle">
     <button id="btn2d" class="active">2D Harita</button>
@@ -39,12 +46,11 @@
     <div><span class="dot green"></span>< 3.0</div>
     <div><span class="dot yellow"></span>3.0–3.9</div>
     <div><span class="dot orange"></span>4.0–4.9</div>
-    <div><span class="dot red"></span> ≥ 5.0</div>
+    <div><span class="dot red"></span>≥ 5.0</div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <script src="https://unpkg.com/globe.gl"></script>
   <script src="app.js"></script>
-
 </body>
 </html>
