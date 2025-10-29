@@ -1,0 +1,83 @@
+body {
+  background: #10131a;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  text-align: center;
+}
+
+/* Buttons + Controls */
+#viewToggle, #controls {
+  width: 90%;
+  margin: 12px auto;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+#viewToggle button {
+  background: #0f1420;
+  padding: 8px 14px;
+  color: #fff;
+  border-radius: 8px;
+  border: 1px solid #2d3342;
+  cursor: pointer;
+}
+#viewToggle .active { outline: 2px solid #3a78ff; }
+
+#controls {
+  background: #161a23;
+  border: 1px solid #2d3342;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+#controls select, #controls input, #controls button {
+  background: #0f1420;
+  border: 1px solid #2d3342;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Map + Globe Containers */
+#map, #globe {
+  width: 100%;
+  height: calc(100vh - 200px);
+  min-height: 430px;
+  border-radius: 10px;
+  margin: auto;
+  border: 2px solid #222;
+  overflow: hidden;
+}
+
+#globe {
+  display: none;
+  background: radial-gradient(#0a0e16, #0b0f19);
+}
+
+#globe canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Legend */
+#legend {
+  position: fixed;
+  right: 16px;
+  bottom: 18px;
+  padding: 10px 12px;
+  background: #0f1420;
+  border: 1px solid #2d3342;
+  border-radius: 8px;
+  font-size: 13px;
+  z-index: 9999;
+}
+#legend .dot {
+  width: 10px;height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+.green{background:#2ecc71;}
+.yellow{background:#f1c40f;}
+.orange{background:#e67e22;}
+.red{background:#e74c3c;}

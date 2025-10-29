@@ -1,0 +1,185 @@
+// ========== 2D MAP ========== 
+const map = L.map('map', {
+  center: [39, 35],
+  zoom: 4,
+  minZoom: 2,
+  maxZoom: 8,
+  worldCopyJump: true
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  noWrap: false,
+  continuousWorld: true
+}).addTo(map);
+
+function fixMapSize() {
+  map.invalidateSize(true);
+}
+function prepareMap() {
+  fixMapSize();
+  setTimeout(fixMapSize, 200);
+}
+
+
+// ====== State ======
+let quakes = [];
+const state = { window: "day", minmag: 0, markers: [] };
+
+
+// ====== Elements ======
+const btn2d = document.getElementById('btn2d');
+const btn3d = document.getElementById('btn3d');
+const globeEl = document.getElementById('globe');
+const refreshBtn = document.getElementById('refreshBtn');
+const windowSelect = document.getElementById('windowSelect');
+const magRange = document.getElementById('magRange');
+const magVal = document.getElementById('magVal');
+
+magRange.oninput = () => {
+  state.minmag = Number(magRange.value);
+  magVal.textContent = state.minmag.toFixed(1);
+};
+windowSelect.onchange = () => state.window = windowSelect.value;
+
+
+// ====== Helpers ======
+const colorForMag = m => (m >= 5 ? 'red' : m >= 4 ? 'orange' : m >= 3 ? 'yellow' : 'lime');
+
+const clearMarkers = () => {
+  state.markers.forEach(m => map.removeLayer(m));
+  state.markers = [];
+};
+
+async function fetchQuakes() {
+  const res = await fetch(
+    `http://127.0.0.1:8000/earthquakes?window=${state.window}&minmag=${state.minmag}`
+  );
+  quakes = await res.json();
+}
+
+
+// ======= LOAD 2D =======
+async function loadEarthquakes2D() {
+  await fetchQuakes();
+  clearMarkers();
+  if (!quakes || quakes.length === 0) return;
+
+  quakes
+    .filter(eq => eq.mag >= state.minmag) // ✅ Ön uçta kesin filtreleme
+    .forEach(eq => {
+      const marker = L.circleMarker([eq.lat, eq.lon], {
+        radius: Math.max(2, eq.mag * 2),
+        color: colorForMag(eq.mag),
+        fillColor: colorForMag(eq.mag),
+        fillOpacity: 0.55
+      })
+        .bindPopup(
+          `<b>${eq.title}</b><br>` +
+          `Büyüklük: ${eq.mag} Mw<br>` +
+          `Derinlik: ${eq.depth} km`
+        )
+        .addTo(map);
+
+      state.markers.push(marker);
+    });
+
+  fixMapSize();
+}
+
+
+// ========== 3D GLOBE ========== 
+let world;
+
+async function initGlobe(forceReload = false) {
+
+  if (!quakes.length || forceReload)
+    await fetchQuakes();
+
+  const points = quakes
+    .filter(eq => eq.mag >= state.minmag) // ✅ Filtre 3D’de de tam uygulanır
+    .map(eq => ({
+      lat: eq.lat,
+      lng: eq.lon,
+      mag: eq.mag
+    }));
+
+  if (!world || forceReload) {
+    globeEl.innerHTML = "";
+
+    world = Globe()(globeEl)
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+      .pointsData(points)
+      .pointColor(p => colorForMag(p.mag))
+      .pointRadius(p => Math.max(0.12, p.mag * 0.13))
+      .pointAltitude(p => Math.min(0.05, (p.mag - 1) * 0.009))
+      .showAtmosphere(true)
+      .atmosphereColor('#88aaff')
+      .backgroundColor('rgba(0,0,0,0)');
+
+    const controls = world.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.6;
+    controls.minDistance = 115;
+    controls.maxDistance = 500;
+  }
+
+  world.pointsData(points);
+  fixGlobe();
+}
+
+
+// ========= Globe Size Fix =========
+function fixGlobe() {
+  if (!world) return;
+  requestAnimationFrame(() => {
+    const w = globeEl.clientWidth;
+    const h = globeEl.clientHeight;
+    if (w > 0 && h > 0) {
+      world.width(w);
+      world.height(h);
+    }
+  });
+}
+
+
+// ========= UI ACTIONS =========
+btn2d.onclick = () => {
+  btn2d.classList.add('active');
+  btn3d.classList.remove('active');
+
+  globeEl.style.display = "none";
+  document.getElementById('map').style.display = "block";
+
+  prepareMap();
+};
+
+btn3d.onclick = async () => {
+  btn3d.classList.add('active');
+  btn2d.classList.remove('active');
+
+  document.getElementById('map').style.display = "none";
+  globeEl.style.display = "block";
+
+  await initGlobe();
+  fixGlobe();
+};
+
+refreshBtn.onclick = async () => {
+  if (globeEl.style.display === "block") {
+    await initGlobe(true);
+  } else {
+    await loadEarthquakes2D();
+    prepareMap();
+  }
+};
+
+
+// ========= Responsive =========
+window.addEventListener('resize', () => {
+  fixGlobe();
+  fixMapSize();
+});
+
+// ✅ İlk açılışta deprem verilerini getir ve göster
+loadEarthquakes2D();
