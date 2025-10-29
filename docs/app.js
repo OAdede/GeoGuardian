@@ -9,11 +9,11 @@ const map = L.map('map', {
   worldCopyJump: true
 });
 
-// 🚀 Daha hızlı harita servisi (Carto Dark)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+// 🌍 Açık renkli klasik harita
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   noWrap: false,
   continuousWorld: true,
-  attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
+  attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>'
 }).addTo(map);
 
 function fixMapSize() {
@@ -25,7 +25,7 @@ function prepareMap() {
   setTimeout(() => {
     map.invalidateSize();
     map.setView([39, 35], 4);
-  }, 500);
+  }, 400);
 }
 
 // ====== State ======
@@ -63,7 +63,7 @@ async function fetchQuakes() {
 
 // ======= LOAD 2D =======
 async function loadEarthquakes2D() {
-  loadingEl.style.display = "flex"; // göster
+  loadingEl.style.display = "flex";
   await fetchQuakes();
   clearMarkers();
   if (!quakes || quakes.length === 0) {
@@ -85,7 +85,7 @@ async function loadEarthquakes2D() {
       state.markers.push(marker);
     });
 
-  loadingEl.style.display = "none"; // gizle
+  loadingEl.style.display = "none";
   prepareMap();
 }
 
@@ -93,6 +93,8 @@ async function loadEarthquakes2D() {
 let world;
 
 async function initGlobe(forceReload = false) {
+  loadingEl.style.display = "flex";
+
   if (!quakes.length || forceReload)
     await fetchQuakes();
 
@@ -126,6 +128,8 @@ async function initGlobe(forceReload = false) {
 
   world.pointsData(points);
   fixGlobe();
+
+  loadingEl.style.display = "none";
 }
 
 function fixGlobe() {
