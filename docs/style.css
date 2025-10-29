@@ -4,6 +4,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   text-align: center;
+  overflow-x: hidden;
 }
 
 /* Buttons + Controls */
@@ -13,7 +14,9 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
+
 #viewToggle button {
   background: #0f1420;
   padding: 8px 14px;
@@ -21,21 +24,36 @@ body {
   border-radius: 8px;
   border: 1px solid #2d3342;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
-#viewToggle .active { outline: 2px solid #3a78ff; }
+#viewToggle button:hover {
+  background: #1a2233;
+}
+#viewToggle .active {
+  outline: 2px solid #3a78ff;
+}
 
+/* Filter and Control Area */
 #controls {
   background: #161a23;
   border: 1px solid #2d3342;
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 10px 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
-#controls select, #controls input, #controls button {
+#controls select,
+#controls input,
+#controls button {
   background: #0f1420;
   border: 1px solid #2d3342;
   color: #fff;
   border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  margin: 4px;
 }
 
 /* Map + Globe Containers */
@@ -72,12 +90,47 @@ body {
   z-index: 9999;
 }
 #legend .dot {
-  width: 10px;height: 10px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
   margin-right: 6px;
 }
-.green{background:#2ecc71;}
-.yellow{background:#f1c40f;}
-.orange{background:#e67e22;}
-.red{background:#e74c3c;}
+.green { background: #2ecc71; }
+.yellow { background: #f1c40f; }
+.orange { background: #e67e22; }
+.red { background: #e74c3c; }
+
+/* ===== 📱 MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+    overflow-x: hidden;
+  }
+
+  #viewToggle, #controls {
+    flex-direction: column;
+    width: 95%;
+    gap: 8px;
+  }
+
+  #viewToggle button,
+  #controls select,
+  #controls input,
+  #controls button {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  #map, #globe {
+    height: 60vh;
+    border-radius: 0;
+  }
+
+  #legend {
+    position: static;
+    margin: 12px auto;
+    width: fit-content;
+  }
+}
