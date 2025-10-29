@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+requests
+pip==25.3
