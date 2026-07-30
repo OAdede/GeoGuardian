@@ -40,6 +40,7 @@ def get_latest_earthquakes(window: str = "day", minmag: float = 0.0):
                 "lon": coords[0],
                 "depth": coords[2] or 0,
                 "time": q["properties"]["time"],
+                "url": q["properties"].get("url"),
                 "source": "USGS",
             })
         # USGS beslemesi kademeli (all/1.0/2.5/4.5); tam eşik burada uygulanır

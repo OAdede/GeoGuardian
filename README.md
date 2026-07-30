@@ -1,19 +1,22 @@
 # 🌍 GeoGuardian — Canlı Deprem Takip Sistemi
 
-Dünya genelindeki depremleri gerçek zamanlı izleyen web uygulaması: **2D harita** (Leaflet)
-ve **3D küre** (globe.gl) görünümü, zaman aralığı ve büyüklük filtreleri, otomatik yenileme.
+Dünya genelindeki depremleri gerçek zamanlı izleyen **izleme paneli**: canlı istatistikler,
+tıklanabilir deprem listesi, **2D koyu harita** (Leaflet) ve **3D küre** (globe.gl).
 
 **Canlı Demo:** **https://oadede.github.io/GeoGuardian/**
 
 ## Özellikler
 
-- 🗺️ 2D harita ve 🌐 3D döner küre arasında tek tıkla geçiş
-- ⏱️ Zaman filtresi: son 1 saat / 24 saat / 7 gün / 30 gün
-- 📏 Minimum büyüklük (Mw) filtresi
-- 🎨 Büyüklüğe göre renk kodu (yeşil → kırmızı) ve boyutlanan işaretçiler
-- 🕐 Her depremin saati ve "x dk önce" görece zamanı
+- 📊 Canlı istatistik kartları: toplam deprem, en büyüğü, son 1 saat, M ≥ 4.5
+- 📋 Son depremler listesi — satıra tıklayınca harita/küre o depreme uçar
+- 🗺️ 2D koyu harita ve 🌐 3D döner küre arasında tek tıkla geçiş
+- 💥 3D kürede M ≥ 5 depremler için yayılan sismik halka animasyonu
+- ⏱️ Zaman filtresi (1 saat / 24 saat / 7 gün / 30 gün) ve anında uygulanan şiddet kaydırıcısı
+- 🇹🇷 Tek tıkla Türkiye'ye odaklanma
+- 🔗 Paylaşılabilir bağlantılar: filtreler URL'de taşınır (`?window=week&minmag=4&view=3d`)
+- 🕐 Her depremin saati, "x dk önce" görece zamanı ve USGS detay bağlantısı
 - 🌡️ Deprem noktasındaki güncel hava durumu (opsiyonel, popup içinde)
-- 🔄 2 dakikada bir sessiz otomatik yenileme, durum çubuğunda son güncelleme saati
+- 🔄 2 dakikada bir sessiz otomatik yenileme, durum çubuğunda kaynak + son güncelleme
 - 📱 Mobil uyumlu arayüz
 
 ## Mimari
