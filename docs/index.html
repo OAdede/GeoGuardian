@@ -3,23 +3,40 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GeoGuardian 🌍</title>
+  <title>GeoGuardian — Canlı Deprem Takip Sistemi</title>
+  <meta name="description" content="Dünya genelindeki depremleri USGS verisiyle gerçek zamanlı izleyin — 2D harita ve 3D küre görünümü."/>
+  <meta property="og:title" content="GeoGuardian — Canlı Deprem Takip Sistemi"/>
+  <meta property="og:description" content="Gerçek zamanlı küresel deprem izleme: 2D harita ve 3D küre."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://oadede.github.io/GeoGuardian/"/>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%230f1420'/%3E%3Ccircle cx='32' cy='32' r='27' fill='none' stroke='%233a78ff' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23e74c3c'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23e67e22' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23f1c40f' stroke-width='2'/%3E%3C/svg%3E"/>
   <link rel="stylesheet" href="style.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H"
+        crossorigin="anonymous"/>
 </head>
 <body>
 
-  <h2>🌍 GeoGuardian - Canlı Afet Takip Sistemi</h2>
+  <header id="ustBar">
+    <h1>🌍 GeoGuardian <span>Canlı Deprem Takip Sistemi</span></h1>
+    <p id="status" aria-live="polite" aria-atomic="true">Yükleniyor…</p>
+  </header>
 
   <!-- Loading Spinner -->
   <div id="loading">
     <div class="spinner"></div>
-    <p>Veriler yükleniyor...</p>
+    <p>Veriler yükleniyor…</p>
+  </div>
+
+  <!-- Hata bandı -->
+  <div id="errorBar" role="alert">
+    ⚠️ Deprem verisi şu an alınamıyor. Bağlantını kontrol edip tekrar dene.
+    <button id="retryBtn">Tekrar dene</button>
   </div>
 
   <div id="viewToggle">
-    <button id="btn2d" class="active">2D Harita</button>
-    <button id="btn3d">3D Küre</button>
+    <button id="btn2d" class="active">🗺️ 2D Harita</button>
+    <button id="btn3d">🌐 3D Küre</button>
   </div>
 
   <div id="controls">
@@ -28,6 +45,7 @@
         <option value="hour">1 Saat</option>
         <option value="day" selected>24 Saat</option>
         <option value="week">7 Gün</option>
+        <option value="month">30 Gün</option>
       </select>
     </label>
 
@@ -36,21 +54,30 @@
       <span id="magVal">0.0</span>
     </label>
 
-    <button id="refreshBtn">Yenile</button>
+    <button id="refreshBtn">⟳ Yenile</button>
   </div>
 
   <div id="map"></div>
   <div id="globe"></div>
 
   <div id="legend">
-    <div><span class="dot green"></span>< 3.0</div>
+    <div><span class="dot green"></span>&lt; 3.0</div>
     <div><span class="dot yellow"></span>3.0–3.9</div>
     <div><span class="dot orange"></span>4.0–4.9</div>
     <div><span class="dot red"></span>≥ 5.0</div>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/globe.gl"></script>
+  <footer id="altBilgi">
+    Veri: <a href="https://earthquake.usgs.gov/" target="_blank" rel="noopener">USGS</a> ·
+    <a href="https://github.com/OAdede/GeoGuardian" target="_blank" rel="noopener">Kaynak kodu</a>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH"
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/globe.gl@2.46.1/dist/globe.gl.min.js"
+          integrity="sha384-fS13P48RBFel+cPUp5960AhzvtEr64LerQ00neZuM+Hi/VDxxemdQnN7IcWPYvPb"
+          crossorigin="anonymous"></script>
   <script src="app.js"></script>
 </body>
 </html>

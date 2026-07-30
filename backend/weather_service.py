@@ -10,12 +10,15 @@ def get_weather(lat, lon):
         return {"error": "Weather API key missing"}
 
     url = (
-        "http://api.openweathermap.org/data/2.5/weather"
+        "https://api.openweathermap.org/data/2.5/weather"
         f"?lat={lat}&lon={lon}&units=metric&lang=tr&appid={API_KEY}"
     )
 
-    res = requests.get(url)
-    
+    try:
+        res = requests.get(url, timeout=6)
+    except requests.RequestException:
+        return {"error": "Weather API unreachable"}
+
     if res.status_code != 200:
         return {"error": "Weather API failed"}
 

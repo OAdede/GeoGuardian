@@ -42,7 +42,8 @@ def get_latest_earthquakes(window: str = "day", minmag: float = 0.0):
                 "time": q["properties"]["time"],
                 "source": "USGS",
             })
-        return quakes
+        # USGS beslemesi kademeli (all/1.0/2.5/4.5); tam eşik burada uygulanır
+        return [q for q in quakes if q["mag"] >= minmag]
     except Exception as e:
         print("USGS Hatası =>", e)
         return {"error": "Veri alınamadı"}
